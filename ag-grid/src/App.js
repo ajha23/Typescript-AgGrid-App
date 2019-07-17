@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import './App.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -9,21 +10,27 @@ class App extends Component {
     super(props);
     this.state = {
       columnDefs: [{
-        headerName: "Make", field: "make"
+        headerName: "Id", field: "created_at_i"
       }, {
-        headerName: "Model", field: "model"
+        headerName: "Title", field: "title"
       }, {
-        headerName: "Price", field: "price"
+        headerName: "Url", field: "url"
       }],
-      rowData: [{
-        make: "Toyota", model: "Celica", price: 35000
-      }, {
-        make: "Ford", model: "Mondeo", price: 32000
-      }, {
-        make: "Porsche", model: "Boxter", price: 72000
-      }]
+      rowData: []
     }
   }
+
+
+  componentDidMount() {
+  
+    axios.get("http://hn.algolia.com/api/v1/search?tags=front_page").then(res => {
+        this.setState({
+          rowData: [...res.data.hits]
+        })
+
+    })
+
+}
 
   render() {
     return (
@@ -34,6 +41,8 @@ class App extends Component {
         width: '600px' }} 
       >
         <AgGridReact
+         enableFilter={true}
+          enableSorting={true}
           columnDefs={this.state.columnDefs}
           rowData={this.state.rowData}>
         </AgGridReact>
